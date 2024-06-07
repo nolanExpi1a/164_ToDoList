@@ -44,7 +44,7 @@
                         </a>
                         <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navdropdownfilms">
                             <li><a class="dropdown-item" href="{{ url_for('films_genres_afficher', id_film_sel=0) }}">Films Festival</a></li>
-                            <li><a class="dropdown-item" href="{{ url_for('films_genres_afficher', id_film_sel=0) }}">taches artistes</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('gestion_contrats_afficher',order_by='ASC', id_contrat_sel=0) }}">contracs</a></li>
                             <li><a class="dropdown-item" href="{{ url_for('genres_afficher', order_by='ASC', id_genre_sel=0) }}">Calendrier</a></li>
                         </ul>
                     </li>

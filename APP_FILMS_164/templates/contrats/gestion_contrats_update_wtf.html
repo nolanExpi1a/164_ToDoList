@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %} Mettre à jour un contrat {% endblock %}
+{% block body %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            <h1>Mettre à jour un Contrat</h1>
+            <form method="post">
+                {{ form_update.hidden_tag() }}
+                <div class="form-group">
+                    {{ form_update.ID_Artiste.label(class="form-label") }}
+                    {{ form_update.ID_Artiste(class="form-control") }}
+                </div>
+                <div class="form-group">
+                    {{ form_update.Date_Contrat.label(class="form-label") }}
+                    {{ form_update.Date_Contrat(class="form-control") }}
+                </div>
+                <div class="form-group">
+                    {{ form_update.Description_Contrat.label(class="form-label") }}
+                    {{ form_update.Description_Contrat(class="form-control") }}
+                </div>
+                <div class="form-group">
+                    {{ form_update.Montant.label(class="form-label") }}
+                    {{ form_update.Montant(class="form-control") }}
+                </div>
+                <button type="submit" class="btn btn-primary">Mettre à jour</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

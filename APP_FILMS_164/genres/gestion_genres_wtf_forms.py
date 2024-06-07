@@ -11,7 +11,7 @@ from wtforms.validators import Regexp
 
 
 class FormWTFAjouterGenres(FlaskForm):
-    nom_evenement_regexp = "^([A-Z]|[a-zÀ-ÖØ-öø-ÿ])[A-Za-zÀ-ÖØ-öø-ÿ]*['\- ]?[A-Za-zÀ-ÖØ-öø-ÿ]+$"
+    nom_evenement_regexp = "^([A-Za-zÀ-ÖØ-öø-ÿ0-9]+(['\- ]?[A-Za-zÀ-ÖØ-öø-ÿ0-9]+)*)$"
     nom_evenement_wtf = StringField("Nom événement", validators=[Length(min=2, max=20, message="min 2 max 20"),
                                                                  Regexp(nom_evenement_regexp,
                                                                         message="Pas de chiffres, de "
@@ -38,7 +38,7 @@ class FormWTFAjouterGenres(FlaskForm):
 
 
 class FormWTFUpdateGenre(FlaskForm):
-    nom_genre_update_regexp = "^([A-Z]|[a-zÀ-ÖØ-öø-ÿ])[A-Za-zÀ-ÖØ-öø-ÿ]*['\- ]?[A-Za-zÀ-ÖØ-öø-ÿ]+$"
+    nom_genre_update_regexp = "^([A-Za-zÀ-ÖØ-öø-ÿ0-9]+(['\- ]?[A-Za-zÀ-ÖØ-öø-ÿ0-9]+)*)$"
     nom_genre_update_wtf = StringField("Clavioter le nom voulu ", validators=[Length(min=2, max=20, message="min 2 max 20"),
                                                                           Regexp(nom_genre_update_regexp,
                                                                                  message="Pas de chiffres, de "

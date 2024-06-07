@@ -122,7 +122,17 @@ class ExceptionFilmDeleteWtf(Base):
 class ExceptionInitAppFilms164(Base):
     pass
 
+class ExceptionContratsAfficher(Base):
+    pass
 
+class ExceptionContratsAjouterWtf(Base):
+    pass
+
+class ExceptionContratUpdateWtf(Base):
+    pass
+
+class ExceptionContratDeleteWtf(Base):
+    pass
 """
     Grâce à la méthode "flash" cela permet de "raise" (remonter) les erreurs "try...execpt" dans la page "home.html"
 """

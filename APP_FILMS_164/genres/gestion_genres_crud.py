@@ -166,7 +166,7 @@ def genre_update_wtf():
 
             flash(f"Donnée mise à jour !!", "success")
 
-            return redirect(url_for('genres_afficher', id_genre_sel=id_genre_update))
+            return redirect(url_for('genres_afficher', order_by="ASC", id_genre_sel=id_genre_update))
 
         elif request.method == "GET":
             str_sql_select_genre = "SELECT ID_Evenement, Nom_Evenement, Date_Evenement, Lieu FROM t_calendrier WHERE ID_Evenement = %(value_id_genre)s"
