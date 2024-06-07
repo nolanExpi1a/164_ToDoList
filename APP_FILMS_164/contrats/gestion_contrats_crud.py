@@ -7,29 +7,26 @@ from APP_FILMS_164.contrats.gestion_contrats_wtf_forms import FormeWTFajouterCon
 
 @app.route("/gestion_contrats_afficher/<string:order_by>/<int:id_contrat_sel>", methods=['GET', 'POST'])
 def gestion_contrats_afficher(order_by, id_contrat_sel):
-    if request.method == "GET":
-        try:
-            with DBconnection() as mc_afficher:
-                if order_by == "ASC" and id_contrat_sel == 0:
-                    strsql_contrats_afficher = """SELECT ID_Contrat, ID_Artiste, Date_Contrat, Description_Contrat, Montant FROM t_contrats ORDER BY ID_Contrat ASC"""
-                    mc_afficher.execute(strsql_contrats_afficher)
-                elif order_by == "ASC":
-                    valeur_id_contrat_selected_dictionnaire = {"value_id_contrat_selected": id_contrat_sel}
-                    strsql_contrats_afficher = """SELECT ID_Contrat, ID_Artiste, Date_Contrat, Description_Contrat, Montant FROM t_contrats WHERE ID_Contrat = %(value_id_contrat_selected)s ORDER BY ID_Contrat ASC"""
-                    mc_afficher.execute(strsql_contrats_afficher, valeur_id_contrat_selected_dictionnaire)
-                else:
-                    strsql_contrats_afficher = """SELECT ID_Contrat, ID_Artiste, Date_Contrat, Description_Contrat, Montant FROM t_contrats ORDER BY ID_Contrat DESC"""
-                    mc_afficher.execute(strsql_contrats_afficher)
+    try:
+        with DBconnection() as mc_afficher:
+            if order_by == "ASC" and id_contrat_sel == 0:
+                strsql_contrats_afficher = """SELECT ID_Contrat, ID_Artiste, Date_Contrat, Description_Contrat, Montant FROM t_contrats ORDER BY ID_Contrat ASC"""
+                mc_afficher.execute(strsql_contrats_afficher)
+            elif order_by == "ASC":
+                valeur_id_contrat_selected_dictionnaire = {"value_id_contrat_selected": id_contrat_sel}
+                strsql_contrats_afficher = """SELECT ID_Contrat, ID_Artiste, Date_Contrat, Description_Contrat, Montant FROM t_contrats WHERE ID_Contrat = %(value_id_contrat_selected)s ORDER BY ID_Contrat ASC"""
+                mc_afficher.execute(strsql_contrats_afficher, valeur_id_contrat_selected_dictionnaire)
+            else:
+                strsql_contrats_afficher = """SELECT ID_Contrat, ID_Artiste, Date_Contrat, Description_Contrat, Montant FROM t_contrats ORDER BY ID_Contrat DESC"""
+                mc_afficher.execute(strsql_contrats_afficher)
 
-                data_contrats = mc_afficher.fetchall()
+            data_contrats = mc_afficher.fetchall()
 
-                if not data_contrats:
-                    flash("Aucun contrat trouvé", "warning")
+            if not data_contrats:
+                flash("Aucun contrat trouvé", "warning")
 
-        except Exception as Exception_contrats_afficher:
-            raise ExceptionContratsAfficher(f"fichier : {Path(__file__).name}  ;  "
-                                            f"{gestion_contrats_afficher.__name__} ; "
-                                            f"{Exception_contrats_afficher}")
+    except Exception as e:
+        raise ExceptionContratsAfficher(f"fichier : {Path(__file__).name} ; {gestion_contrats_afficher.__name__} ; {str(e)}")
 
     return render_template("contrats/gestion_contrats_afficher.html", data=data_contrats)
 
@@ -40,32 +37,24 @@ def gestion_contrats_add_wtf():
     if request.method == "POST":
         try:
             if form.validate_on_submit():
-                nom_contrat = form.nom_contrat_wtf.data
-                date_contrat = form.date_contrat_wtf.data
-                lieu_contrat = form.lieu_contrat_wtf.data
+                values = {
+                    "ID_Artiste": form.id_artiste_wtf.data,
+                    "Date_Contrat": form.date_contrat_wtf.data,
+                    "Description_Contrat": form.description_contrat_wtf.data,
+                    "Montant": form.montant_wtf.data
+                }
+                strsql_insert_contrat = """INSERT INTO t_contrats (ID_Contrat, ID_Artiste, Date_Contrat, Description_Contrat, Montant) VALUES (NULL, %(ID_Artiste)s, %(Date_Contrat)s, %(Description_Contrat)s, %(Montant)s)"""
+                with DBconnection() as conn:
+                    conn.execute(strsql_insert_contrat, values)
+                flash("Contrat ajouté avec succès", "success")
+                return redirect(url_for('gestion_contrats_afficher', order_by="ASC", id_contrat_sel=0))
 
-                valeurs_insertion_dictionnaire = {"value_nom_contrat": nom_contrat,
-                                                  "value_date_contrat": date_contrat,
-                                                  "value_lieu_contrat": lieu_contrat}
-                print("valeurs_insertion_dictionnaire ", valeurs_insertion_dictionnaire)
+        except Exception as e:
+            raise ExceptionContratsAjouterWtf(f"fichier : {Path(__file__).name} ; {gestion_contrats_add_wtf.__name__} ; {str(e)}")
 
-                strsql_insert_contrat = """INSERT INTO t_contrats (ID_Contrat, ID_Artiste, Date_Contrat, Description_Contrat, Montant) 
-                VALUES (NULL, %(value_nom_contrat)s, %(value_date_contrat)s, %(value_lieu_contrat)s) """
-                with DBconnection() as mconn_bd:
-                    mconn_bd.execute(strsql_insert_contrat, valeurs_insertion_dictionnaire)
+    return render_template("contrats/gestion_contrats_add_wtf.html", form=form)
 
-                flash(f"Données insérées !!", "success")
-                print(f"Données insérées !!")
 
-                # Pour afficher et constater l'insertion de la valeur, on affiche en ordre inverse. (DESC)
-                return redirect(url_for('gestion_contrats_afficher', order_by='DESC', id_contrat_sel=0))
-
-        except Exception as Exception_contrats_ajouter_wtf:
-            raise ExceptionContratsAjouterWtf(f"fichier : {Path(__file__).name}  ;  "
-                                            f"{gestion_contrats_add_wtf.__name__} ; "
-                                            f"{Exception_contrats_ajouter_wtf}")
-
-    return render_template("contrats/contrats_ajouter_wtf.html", form=form)
 
 @app.route("/gestion_contrats_update_wtf/<int:id_contrat_update>", methods=['GET', 'POST'])
 def gestion_contrats_update_wtf(id_contrat_update):
@@ -73,22 +62,25 @@ def gestion_contrats_update_wtf(id_contrat_update):
 
     try:
         if form_update.validate_on_submit():
-            nom_contrat_update = form_update.nom_contrat_update_wtf.data
+            id_artiste_update = form_update.id_artiste_update_wtf.data
             date_contrat_update = form_update.date_contrat_update_wtf.data
-            lieu_contrat_update = form_update.lieu_contrat_update_wtf.data
+            description_contrat_update = form_update.description_contrat_update_wtf.data
+            montant_update = form_update.montant_update_wtf.data
 
             valeur_update_dictionnaire = {
                 "value_id_contrat": id_contrat_update,
-                "value_nom_contrat": nom_contrat_update,
+                "value_id_artiste": id_artiste_update,
                 "value_date_contrat": date_contrat_update,
-                "value_lieu_contrat": lieu_contrat_update
+                "value_description_contrat": description_contrat_update,
+                "value_montant": montant_update
             }
 
             str_sql_update_contrat = """UPDATE t_contrats SET 
-                                      Nom_Contrat = %(value_nom_contrat)s, 
-                                      Date_Contrat = %(value_date_contrat)s, 
-                                      Lieu_Contrat = %(value_lieu_contrat)s 
-                                      WHERE ID_Contrat = %(value_id_contrat)s"""
+                                        ID_Artiste = %(value_id_artiste)s, 
+                                        Date_Contrat = %(value_date_contrat)s, 
+                                        Description_Contrat = %(value_description_contrat)s,
+                                        Montant = %(value_montant)s 
+                                        WHERE ID_Contrat = %(value_id_contrat)s"""
             with DBconnection() as conn_bd:
                 conn_bd.execute(str_sql_update_contrat, valeur_update_dictionnaire)
 
@@ -103,14 +95,16 @@ def gestion_contrats_update_wtf(id_contrat_update):
                 conn_bd.execute(str_sql_select_contrat, valeur_select_dictionnaire)
                 data_contrat = conn_bd.fetchone()
 
-            form_update.nom_contrat_update_wtf.data = data_contrat["Nom_Contrat"]
+            form_update.id_artiste_update_wtf.data = data_contrat["ID_Artiste"]
             form_update.date_contrat_update_wtf.data = data_contrat["Date_Contrat"]
-            form_update.lieu_contrat_update_wtf.data = data_contrat["Lieu_Contrat"]
+            form_update.description_contrat_update_wtf.data = data_contrat["Description_Contrat"]
+            form_update.montant_update_wtf.data = data_contrat["Montant"]
 
     except Exception as e:
         raise ExceptionContratUpdateWtf(f"fichier : {Path(__file__).name}  ;  {gestion_contrats_update_wtf.__name__} ; {e}")
 
     return render_template("contrats/contrat_update_wtf.html", form_update=form_update)
+
 
 @app.route("/gestion_contrats_delete_wtf/<int:id_contrat_delete>", methods=['GET', 'POST'])
 def gestion_contrats_delete_wtf(id_contrat_delete):
@@ -154,9 +148,10 @@ def gestion_contrats_delete_wtf(id_contrat_delete):
                 mydb_conn.execute(str_sql_id_contrat, valeur_select_dictionnaire)
                 data_contrat = mydb_conn.fetchone()
 
-                form_delete.nom_contrat_delete_wtf.data = data_contrat["Nom_Contrat"]
+                form_delete.id_artiste_delete_wtf.data = data_contrat["ID_Artiste"]
                 form_delete.date_contrat_delete_wtf.data = data_contrat["Date_Contrat"]
-                form_delete.lieu_contrat_delete_wtf.data = data_contrat["Lieu_Contrat"]
+                form_delete.description_contrat_delete_wtf.data = data_contrat["Description_Contrat"]
+                form_delete.montant_delete_wtf.data = data_contrat["Montant"]
 
             btn_submit_del = False
 

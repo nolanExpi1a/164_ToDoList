@@ -1,19 +1,20 @@
 {% extends "base.html" %}
-{% block title %} Afficher GENRES {% endblock %}
+{% block title %} Afficher CONTRATS {% endblock %}
 {% block body %}
 <div class="container">
-	<div class="row">
-		<div class="col-md-12">
-			<p>
-				contrats
-			</p>
+    <div class="row">
+        <div class="col-md-12">
+            <p>
+                contrats
+            </p>
             <table class="table table-bordered table-sm">
                 <thead>
                     <tr>
-                        <th class="align-middle">Id evenement</th>
-                        <th class="align-middle">nom evenement</th>
-                        <th class="align-middle">Date evenement</th>
-                        <th class="align-middle">Lieu</th>
+                        <th class="align-middle">Id Contrat</th>
+                        <th class="align-middle">Id Artiste</th>
+                        <th class="align-middle">Date Contrat</th>
+                        <th class="align-middle">Description Contrat</th>
+                        <th class="align-middle">Montant</th>
                         <th class="align-middle">Actions</th>
                     </tr>
                 </thead>
@@ -21,25 +22,25 @@
                 {% if data %}
                     {% for row in data %}
                         <tr>
-                            <td class="align-middle">{{ row.ID_Evenement }}</td>
-                            <td class="align-middle">{{ row.Nom_Evenement }}</td>
-                            <td class="align-middle">{{ row.Date_Evenement }}</td>
-                            <td class="align-middle">{{ row.Lieu }}</td>
+                            <td class="align-middle">{{ row.ID_Contrat }}</td>
+                            <td class="align-middle">{{ row.ID_Artiste }}</td>
+                            <td class="align-middle">{{ row.Date_Contrat }}</td>
+                            <td class="align-middle">{{ row.Description_Contrat }}</td>
+                            <td class="align-middle">{{ row.Montant }}</td>
                             <td class="text-center align-middle">
-                                <a class="btn btn-primary" href="{{ url_for('genres_ajouter_wtf', id_genre_btn_edit_html=row.ID_Evenement) }}" role="button">Ajouter</a>
-                                <a class="btn btn-warning" href="{{ url_for('genre_update_wtf', id_genre_btn_edit_html=row.ID_Evenement) }}" role="button">Edit</a>
-                                <a class="btn btn-danger" href="{{ url_for('genre_delete_wtf', id_genre_btn_delete_html=row.ID_Evenement) }}" role="button">Delete</a>
+                                <a class="btn btn-warning" href="{{ url_for('gestion_contrats_update_wtf', id_contrat_update=row.ID_Contrat) }}" role="button">Edit</a>
+                                <a class="btn btn-danger" href="{{ url_for('gestion_contrats_delete_wtf', id_contrat_delete=row.ID_Contrat) }}" role="button">Delete</a>
                             </td>
                         </tr>
                     {% endfor %}
                 {% else %}
                     <tr>
-                        <td colspan="5" class="text-center">Aucun genre.</td>
+                        <td colspan="6" class="text-center">Aucun contrat trouvé.</td>
                     </tr>
                 {% endif %}
                 </tbody>
             </table>
-		</div>
-	</div>
+        </div>
+    </div>
 </div>
 {% endblock %}
